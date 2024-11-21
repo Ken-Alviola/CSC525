@@ -33,7 +33,7 @@ def train_validate_test_split(df, target, seed=123):
 
 def get_metrics(model, X, y):
     '''
-    get_metrics_bin will take in a sklearn classifier model, an X and a y variable and utilize
+    get_metrics will take in an sklearn classifier model, an X and a y variable and utilize
     the model to make a prediction and then gather accuracy, class report evaluations
 
     return:  a classification report as a pandas DataFrame
@@ -59,23 +59,47 @@ def get_metrics(model, X, y):
 # Load dataset
 data = pd.read_csv('data.csv')
 
+print()
+print('Data exploration:')
+print('-----------------------------------------------------------------')
+
 # Data exploration
 sns.countplot(data, x='Genre', hue='Gender', hue_order = [1, 0])
-plt.title('Counts of each Genre grouped by Gender (1=M, 0=F)')
+plt.title('Counts of each Genre grouped by Gender (1=M, 0=F):')
+print()
+print('Counts of each Genre grouped by Gender (1=M, 0=F):')
+print('Pretty even distribution of favorite genre between all records and genders. Close windows to proceed.')
+print()
 plt.show()
 
-sns.heatmap(data.corr(),annot=True)
+# One-hot encode the 'Genre' column
+encoded_data = pd.get_dummies(data, columns=['Genre'])
+sns.heatmap(encoded_data.corr(),annot=True)
 plt.title('Correlation Heatmap')
+print()
+print('Correlation Heatmap:')
+print('No strong correlation between any features.')
+print()
 plt.show()
 
 sns.pairplot(data, hue='Gender', hue_order = [1,0])
 plt.title('Pairplot between feature grouped by Gender (1=M, 0=F)')
+print()
+print('Pairplot between feature grouped by Gender (1=M, 0=F):')
+print('Fairly normal distribution throughout each feature and gender.')
+print()
 plt.show()
 
 sns.pairplot(data, hue='Genre')
-plt.title('Pairplot between each feature grouped by Genre')
+plt.title('Pairplot between each feature grouped by Genre.')
+print()
+print('Pairplot between each feature grouped by Genre:')
+print('Again, fairly normal distribution and no real pattern for each feature.')
+print()
 plt.show()
 
+print('Modeling Section:')
+print('-----------------------------------------------------------------')
 
 # Splitting data into train, validate, and test
 train, validate, test = train_validate_test_split(data,'Genre', seed=123)
@@ -106,7 +130,7 @@ print()
 #Setting baseline accuracy using most frequent class
 train['baseline_prediction'] = 'Strategy'
 baseline_accuracy = (train.Genre == train.baseline_prediction).mean()
-print(f'Baseline accuracy: {round(baseline_accuracy, 2)}%')
+print(f'Baseline accuracy using most frequent class: {round(baseline_accuracy, 2)}%')
 print()
 input('Press Enter')
 print()
@@ -138,6 +162,8 @@ print('Test data report: ')
 print('---------------------------------------------------------------')
 knn_report = get_metrics(knn,Xtest_scaled,y_test)
 print(knn_report)
+print()
+print('KNN model with 4 nearest neighbors performing slightly below baseline on out of sample data.')
 print()
 input('Press Enter')
 print()
